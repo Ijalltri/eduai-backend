@@ -9,3 +9,4 @@ router.put('/:id', updatepelajaran);
 router.delete('/:id', deletepelajaran);
 
 export default router;
+

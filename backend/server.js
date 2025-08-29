@@ -5,6 +5,7 @@ import pelajaranroutes from './routes/pelajaranroutes.js';
 import loginroutes from './routes/loginroutes.js';
 import materiroutes from './routes/materiroutes.js';
 import babroutes from './routes/babroutes.js';
+import subbabroutes from './routes/subbabroutes.js';
 // import signinroutes from './routes/signinroutes.js';
 
 const app = express();
@@ -18,6 +19,7 @@ app.use('/api/jenjang', jenjangroutes);
 app.use('/api/pelajaran', pelajaranroutes);
 app.use('/api/materi', materiroutes);
 app.use('/api/bab', babroutes);
+app.use('/api/subbab', subbabroutes);
 
 // Handle 404
 app.use((req, res) => {

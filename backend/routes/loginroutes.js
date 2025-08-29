@@ -1,5 +1,11 @@
 import express from 'express';
-import { loginUser, signinUser } from '../control/logincontrol.js';
+import { loginUser,
+  signinUser,
+  getUserById,
+  listUsers,
+  updateUser,
+  updatePassword,
+  deleteUser } from '../control/logincontrol.js';
 
 const router = express.Router();
 
