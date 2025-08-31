@@ -130,10 +130,11 @@ useEffect(() => {
     }
     // gabungkan progres dengan bab
   const babWithProgress = (data?.bab || []).map((b) => {
-  const progres = data?.progres?.find((p) => p.id_bab === b.id_bab);
   return {
     ...b,
-    progres: progres ? progres.presentase : 0, // default 0 kalau belum ada progres
+    total_subbab: b.progres?.total || 0,
+    selesai: b.progres?.selesai || 0,
+    progres: b.progres?.persen || 0, // default 0 kalau belum ada progres
   };
 });
 

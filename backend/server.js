@@ -1,5 +1,7 @@
 import express from 'express';
 import cors from 'cors';
+import session from "express-session";
+import dotenv from "dotenv";
 import jenjangroutes from './routes/jenjangroutes.js';
 import pelajaranroutes from './routes/pelajaranroutes.js';
 import loginroutes from './routes/loginroutes.js';
@@ -9,9 +11,25 @@ import subbabroutes from './routes/subbabroutes.js';
 // import signinroutes from './routes/signinroutes.js';
 
 const app = express();
-app.use(cors({ origin: 'http://localhost:5173' }));
+app.use(cors({
+  origin: "http://localhost:5173", // frontend kamu
+  credentials: true                // penting biar cookie dikirim
+}));
+
 app.use(express.json());
 
+// untuk sesion
+app.use(session({
+  secret: "rahasia-super-aman", // ganti dengan string panjang random
+  resave: false,
+  saveUninitialized: false,
+  cookie: {
+    secure: false, // true kalau pakai https
+    httpOnly: true,
+    sameSite: "lax", // biar cookie bisa terkirim ke FE
+    maxAge: 1000 * 60 * 60 // 1 jam
+  }
+}));
 // Register routes
 // app.use('/api/regis', signinroutes);
 app.use('/api/auth', loginroutes);

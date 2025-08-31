@@ -3,7 +3,7 @@ import { useState } from "react";
 import '../style.css'; 
 import Sidebar from "../components/Sidebar";
 import BurgerMenu from "../components/BurgerMenu";
-import { NavLink } from "react-router";
+import { NavLink,useNavigate } from "react-router";
 function LoginPage(){
     // Sidebar 
     const [left, setLeft] = useState('-left-70') 
@@ -15,6 +15,7 @@ function LoginPage(){
     const [menuIcon, setMenuIcon] = useState(isSidebarHidden? menuButton : closeButton)
     const [email, setEmail] = useState("");
     const [password, setPassword] = useState("");
+    const navigate = useNavigate();
     
     // Function to hide the sidebar
     function hideSidebar (){
@@ -31,46 +32,86 @@ function LoginPage(){
         }
     }
     const handleLogin = async () => {
-    try {
-      const res = await fetch("http://localhost:5000/api/auth/login", {
-        method: "POST",
-        headers: {
-          "Content-Type": "application/json"
-        },
-        body: JSON.stringify({ email, password })
-      });
+  try {
+    const res = await fetch("http://localhost:5000/api/auth/login", {
+      method: "POST",
+      headers: {
+        "Content-Type": "application/json",
+      },
+      body: JSON.stringify({ email, password }),
+      credentials: "include", // biar cookie session ikut
+    });
 
-      const data = await res.json();
-      console.log("Login response body:", data);
-      localStorage.setItem("user", JSON.stringify(data.user));
+    const data = await res.json();
+    console.log("Login response body:", data);
 
-
-      if (res.ok) {
-        localStorage.setItem('token', data.token);
-        localStorage.setItem('user', JSON.stringify(data.user)); // opsional
-        Swal.fire({
-          icon: "success",
-          title: "Berhasil!",
-          text: data.message,
-          timer: 2000,
-          showConfirmButton: false,
-          });
-      } else {
-        Swal.fire({
-          icon: "error",
-          title: "Oops...",
-          text: data.message,
-        });
+    if (res.ok) {
+      if (data.user) {
+        localStorage.setItem("user", JSON.stringify(data.user));
       }
-    } catch (err) {
-      console.error(err);
+
+      Swal.fire({
+        icon: "success",
+        title: "Berhasil!",
+        text: data.message || "Login sukses",
+        confirmButtonText: "OK",
+      }).then(() => {
+        window.location.href = "http://localhost:5173/";
+      });
+    } else {
       Swal.fire({
         icon: "error",
-        title: "Error",
-        text: "Terjadi kesalahan pada server",
+        title: "Oops...",
+        text: data.message || "Login gagal",
       });
     }
-  };
+  } catch (err) {
+    console.error("Login error:", err);
+    Swal.fire({
+      icon: "error",
+      title: "Error",
+      text: "Terjadi kesalahan pada server",
+    });
+  }
+};
+
+const getCurrentUser = async () => {
+  try {
+    const res = await fetch("http://localhost:5000/api/auth/me", {
+      method: "GET",
+      credentials: "include", // cookie wajib ikut
+    });
+
+    const data = await res.json();
+    console.log("User session:", data);
+
+    if (res.ok) {
+      // Simpan user ke localStorage supaya UI bisa akses cepat
+      localStorage.setItem("user", JSON.stringify(data.user));
+      return data.user;
+    } else {
+      // kalau session invalid
+      localStorage.removeItem("user");
+      Swal.fire({
+        icon: "warning",
+        title: "Session Habis",
+        text: "Silahkan login ulang!",
+        confirmButtonText: "Login"
+      }).then(() => {
+        window.location.href = "http://localhost:5173/login";
+      });
+      return null;
+    }
+  } catch (err) {
+    console.error("Error fetching /me:", err);
+    Swal.fire({
+      icon: "error",
+      title: "Error",
+      text: "Terjadi kesalahan pada server",
+    });
+    return null;
+  }
+};
 
 
 

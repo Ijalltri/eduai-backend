@@ -32,13 +32,15 @@ export const loginUser = async (req, res) => {
       return res.status(401).json({ message: 'Password salah' });
     }
 
-    return res.json({
-      message: 'Login berhasil!',
-      user: {
-        id: user.id_user,
-        username: user.username,
-        email: user.email
-      }
+    req.session.user = {
+  id: user.id_user,
+  username: user.username,
+  email: user.email,
+  role: user.role
+};
+      return res.json({
+  message: 'Login berhasil!',
+  user: req.session.user
     });
   } catch (err) {
     console.error('Database error:', err);

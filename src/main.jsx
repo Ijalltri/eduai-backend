@@ -11,6 +11,7 @@ import MateriBelajarPage from './pages/MateriBelajarPage'
 import LoginPage from './pages/LoginPage'
 import './style.css'
 import SignInPage from './pages/SignInPage'
+import ProtectedRoute from "./components/ProtectedRoute"
 
 createRoot(document.getElementById('root')).render(
     <BrowserRouter>
@@ -19,8 +20,8 @@ createRoot(document.getElementById('root')).render(
         <Route path="/" index element={<Beranda />} />
         <Route path="/ruang-belajar" element={<RuangBelajar/>} />
         <Route path='/ruang-belajar/:id' element={<RuangMateri/>} />
-        <Route path='/ruang-belajar/:kelas/:materi' element={<MateriBelajarPage/>} />
-        <Route path="/ruang-kelas" element={<RuangKelas />} />
+        <Route path='/ruang-belajar/:id/:materi' element={<MateriBelajarPage/>} />
+        <Route path="/ruang-kelas" element={<ProtectedRoute><RuangKelas /></ProtectedRoute>} />
         <Route path="/chatbot" element={<Chatbot />} />
         <Route path="/tentang" element={<Tentang />} />
         <Route path="/brain-academy" element={<BrainAcademy />} />
